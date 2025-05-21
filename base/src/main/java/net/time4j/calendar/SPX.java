@@ -299,7 +299,7 @@ final class SPX
 
     }
 
-    private Object readResolve() throws ObjectStreamException {
+    Object readResolve() throws ObjectStreamException {
 
         return this.obj;
 

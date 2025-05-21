@@ -294,7 +294,7 @@ public final class CalendarFamily<T extends CalendarVariant<T>>
 
     }
 
-    private static class CalendarTimeLine<D extends CalendarVariant<D>>
+    public static class CalendarTimeLine<D extends CalendarVariant<D>>
         implements TimeLine<D>, Serializable {
 
         //~ Instanzvariablen ----------------------------------------------
@@ -375,7 +375,7 @@ public final class CalendarFamily<T extends CalendarVariant<T>>
         }
 
         // reconstruct the calendar system in deserialization
-        private Object readResolve() throws ObjectStreamException {
+        Object readResolve() throws ObjectStreamException {
             Chronology<D> chronology = Chronology.lookup(this.chronoType);
             return new CalendarTimeLine<>(chronology, this.variant);
         }

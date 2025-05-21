@@ -4,206 +4,80 @@ import net.time4j.engine.CalendarSystem;
 import net.time4j.history.ChronoHistory;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.junit.runners.Parameterized;
 
+import java.util.Arrays;
+import java.util.Collection;
 
-@RunWith(JUnit4.class)
+@RunWith(Parameterized.class)
 public class OutOfRangeTest {
 
-    @Test(expected=IllegalArgumentException.class)
-    public void chineseMin() {
-        CalendarSystem<ChineseCalendar> calsys = ChineseCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
+    private final String name;
+    private final CalendarSystem<?> calsys;
+    private final long value;
+
+    public OutOfRangeTest(String name, CalendarSystem<?> calsys, long value) {
+        this.name = name;
+        this.calsys = calsys;
+        this.value = value;
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void chineseMax() {
-        CalendarSystem<ChineseCalendar> calsys = ChineseCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
+    @Parameterized.Parameters(name = "{0} throws on {2}")
+    public static Collection<Object[]> data() {
+        return Arrays.asList(new Object[][] {
+                // chinese
+                { "Chinese.MIN",     ChineseCalendar.axis().getCalendarSystem(), Long.MIN_VALUE },
+                { "Chinese.MAX",     ChineseCalendar.axis().getCalendarSystem(), Long.MAX_VALUE },
+                // coptic
+                { "Coptic.MIN",      CopticCalendar.axis().getCalendarSystem(), Long.MIN_VALUE },
+                { "Coptic.MAX",      CopticCalendar.axis().getCalendarSystem(), Long.MAX_VALUE },
+                // ethiopian
+                { "Ethiopian.MIN",   EthiopianCalendar.axis().getCalendarSystem(), Long.MIN_VALUE },
+                { "Ethiopian.MAX",   EthiopianCalendar.axis().getCalendarSystem(), Long.MAX_VALUE },
+                // persian
+                { "Persian.MIN",     PersianCalendar.axis().getCalendarSystem(), Long.MIN_VALUE },
+                { "Persian.MAX",     PersianCalendar.axis().getCalendarSystem(),                  Long.MAX_VALUE },
+                // thai solar
+                { "ThaiSolar.MIN",   ThaiSolarCalendar.axis().getCalendarSystem(),                Long.MIN_VALUE },
+                { "ThaiSolar.MAX",   ThaiSolarCalendar.axis().getCalendarSystem(),                Long.MAX_VALUE },
+                // hijri (civil)
+                { "HijriCivil.MIN",  HijriCalendar.family().getCalendarSystem(HijriAlgorithm.WEST_ISLAMIC_CIVIL), Long.MIN_VALUE },
+                { "HijriCivil.MAX",  HijriCalendar.family().getCalendarSystem(HijriAlgorithm.WEST_ISLAMIC_CIVIL), Long.MAX_VALUE },
+                // hijri (umalqura)
+                { "HijriUmalqura.MIN", HijriCalendar.family().getCalendarSystem(HijriCalendar.VARIANT_UMALQURA), Long.MIN_VALUE },
+                { "HijriUmalqura.MAX", HijriCalendar.family().getCalendarSystem(HijriCalendar.VARIANT_UMALQURA), Long.MAX_VALUE },
+                // korean
+                { "Korean.MIN",      KoreanCalendar.axis().getCalendarSystem(),                  Long.MIN_VALUE },
+                { "Korean.MAX",      KoreanCalendar.axis().getCalendarSystem(),                  Long.MAX_VALUE },
+                // vietnamese
+                { "Vietnamese.MIN",  VietnameseCalendar.axis().getCalendarSystem(),              Long.MIN_VALUE },
+                { "Vietnamese.MAX",  VietnameseCalendar.axis().getCalendarSystem(),              Long.MAX_VALUE },
+                // minguo
+                { "Minguo.MIN",      MinguoCalendar.axis().getCalendarSystem(),                  Long.MIN_VALUE },
+                { "Minguo.MAX",      MinguoCalendar.axis().getCalendarSystem(),                  Long.MAX_VALUE },
+                // japanese
+                { "Japanese.MIN",    JapaneseCalendar.axis().getCalendarSystem(),                Long.MIN_VALUE },
+                { "Japanese.MAX",    JapaneseCalendar.axis().getCalendarSystem(),                Long.MAX_VALUE },
+                // hebrew
+                { "Hebrew.MIN",      HebrewCalendar.axis().getCalendarSystem(),                  Long.MIN_VALUE },
+                { "Hebrew.MAX",      HebrewCalendar.axis().getCalendarSystem(),                  Long.MAX_VALUE },
+                // indian
+                { "Indian.MIN",      IndianCalendar.axis().getCalendarSystem(),                  Long.MIN_VALUE },
+                { "Indian.MAX",      IndianCalendar.axis().getCalendarSystem(),                  Long.MAX_VALUE },
+                // julian
+                { "Julian.MIN",      JulianCalendar.axis().getCalendarSystem(),                  Long.MIN_VALUE },
+                { "Julian.MAX",      JulianCalendar.axis().getCalendarSystem(),                  Long.MAX_VALUE },
+                // juche
+                { "Juche.MIN",       JucheCalendar.axis().getCalendarSystem(),                   Long.MIN_VALUE },
+                { "Juche.MAX",       JucheCalendar.axis().getCalendarSystem(),                   Long.MAX_VALUE },
+                // sweden (historic)
+                { "Sweden.MIN",      HistoricCalendar.family().getCalendarSystem(ChronoHistory.ofSweden()), Long.MIN_VALUE },
+                { "Sweden.MAX",      HistoricCalendar.family().getCalendarSystem(ChronoHistory.ofSweden()), Long.MAX_VALUE },
+        });
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void copticMin() {
-        CalendarSystem<CopticCalendar> calsys = CopticCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
+    @Test(expected = IllegalArgumentException.class)
+    public void transformOutOfRange() {
+        calsys.transform(value);
     }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void copticMax() {
-        CalendarSystem<CopticCalendar> calsys = CopticCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void ethiopianMin() {
-        CalendarSystem<EthiopianCalendar> calsys = EthiopianCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void ethiopianMax() {
-        CalendarSystem<EthiopianCalendar> calsys = EthiopianCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void persianMin() {
-        CalendarSystem<PersianCalendar> calsys = PersianCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void persianMax() {
-        CalendarSystem<PersianCalendar> calsys = PersianCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void thaiSolarMin() {
-        CalendarSystem<ThaiSolarCalendar> calsys = ThaiSolarCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void thaiSolarMax() {
-        CalendarSystem<ThaiSolarCalendar> calsys = ThaiSolarCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void hijriMin() {
-        CalendarSystem<HijriCalendar> calsys =
-            HijriCalendar.family().getCalendarSystem(HijriAlgorithm.WEST_ISLAMIC_CIVIL);
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void hijriMax() {
-        CalendarSystem<HijriCalendar> calsys =
-            HijriCalendar.family().getCalendarSystem(HijriAlgorithm.WEST_ISLAMIC_CIVIL);
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void umalquraMin() {
-        CalendarSystem<HijriCalendar> calsys = HijriCalendar.family().getCalendarSystem(HijriCalendar.VARIANT_UMALQURA);
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void umalquraMax() {
-        CalendarSystem<HijriCalendar> calsys = HijriCalendar.family().getCalendarSystem(HijriCalendar.VARIANT_UMALQURA);
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void koreanMin() {
-        CalendarSystem<KoreanCalendar> calsys = KoreanCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void koreanMax() {
-        CalendarSystem<KoreanCalendar> calsys = KoreanCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void vietnameseMin() {
-        CalendarSystem<VietnameseCalendar> calsys = VietnameseCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void vietnameseMax() {
-        CalendarSystem<VietnameseCalendar> calsys = VietnameseCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void minguoMin() {
-        CalendarSystem<MinguoCalendar> calsys = MinguoCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void minguoMax() {
-        CalendarSystem<MinguoCalendar> calsys = MinguoCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void japaneseMin() {
-        CalendarSystem<JapaneseCalendar> calsys = JapaneseCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void japaneseMax() {
-        CalendarSystem<JapaneseCalendar> calsys = JapaneseCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void hebrewMin() {
-        CalendarSystem<HebrewCalendar> calsys = HebrewCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void hebrewMax() {
-        CalendarSystem<HebrewCalendar> calsys = HebrewCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void indianMin() {
-        CalendarSystem<IndianCalendar> calsys = IndianCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void indianMax() {
-        CalendarSystem<IndianCalendar> calsys = IndianCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void julianMin() {
-        CalendarSystem<JulianCalendar> calsys = JulianCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void julianMax() {
-        CalendarSystem<JulianCalendar> calsys = JulianCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void jucheMin() {
-        CalendarSystem<JucheCalendar> calsys = JucheCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void jucheMax() {
-        CalendarSystem<JucheCalendar> calsys = JucheCalendar.axis().getCalendarSystem();
-        calsys.transform(Long.MAX_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void swedenMin() {
-        CalendarSystem<HistoricCalendar> calsys =
-            HistoricCalendar.family().getCalendarSystem(ChronoHistory.ofSweden());
-        calsys.transform(Long.MIN_VALUE);
-    }
-
-    @Test(expected=IllegalArgumentException.class)
-    public void swedenMax() {
-        CalendarSystem<HistoricCalendar> calsys =
-            HistoricCalendar.family().getCalendarSystem(ChronoHistory.ofSweden());
-        calsys.transform(Long.MAX_VALUE);
-    }
-
 }

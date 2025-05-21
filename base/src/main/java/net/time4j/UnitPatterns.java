@@ -53,7 +53,7 @@ final class UnitPatterns {
 
     private static final ConcurrentMap<Locale, UnitPatterns> CACHE = new ConcurrentHashMap<>();
 
-    private static final IsoUnit[] UNIT_IDS = {
+    static final IsoUnit[] UNIT_IDS = {
         CalendarUnit.YEARS,
         CalendarUnit.MONTHS,
         CalendarUnit.WEEKS,
@@ -592,7 +592,7 @@ final class UnitPatterns {
 
     //~ Innere Klassen ----------------------------------------------------
 
-    private static class FallbackProvider
+    static class FallbackProvider
         implements UnitPatternProvider {
 
         //~ Methoden ------------------------------------------------------
