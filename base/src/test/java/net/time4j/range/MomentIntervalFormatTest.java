@@ -1,13 +1,14 @@
 package net.time4j.range;
 
-import net.time4j.ClockUnit;
-import net.time4j.Moment;
-import net.time4j.PlainTimestamp;
+import net.time4j.*;
 
+import java.lang.reflect.Method;
 import java.text.ParseException;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import net.time4j.SI;
 import net.time4j.format.expert.Iso8601Format;
 import net.time4j.format.expert.IsoDateStyle;
 import net.time4j.format.expert.IsoDecimalStyle;
@@ -19,6 +20,7 @@ import org.junit.runners.JUnit4;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.Assert.*;
 
 
 @RunWith(JUnit4.class)
@@ -618,6 +620,67 @@ public class MomentIntervalFormatTest {
     @Test(expected=ParseException.class)
     public void parseReducedISO3() throws ParseException {
         MomentInterval.parseISO("2023-03-28T00:00:00/06:00"); // missing time zone
+    }
+
+    /**
+     * Teszteli a MomentInterval.streamUTC() metódust Reflection segítségével
+     * Létrehoz egy 5 másodperces intervallumot, ezután 1 másodperces lépésközzel lekéri az
+     * intervallumban található Moment objektumokat:
+     * 12:00:00, 12:00:01, 12:00:02, 12:00:03, 12:00:04
+     * @throws Exception    bármilyen kivételt dobhat
+     */
+    @Test
+    public void testStreamUTC() throws Exception {
+        Moment start = PlainTimestamp.of(2025, 5, 5, 12, 0).atUTC();
+        Moment end = start.plus(5, SI.SECONDS);
+        MomentInterval interval = MomentInterval.between(start, end);
+
+        Method streamMethod = MomentInterval.class.getDeclaredMethod(
+                "streamUTC",
+                Class.forName("net.time4j.MachineTime"),
+                Moment.class,
+                Moment.class
+        );
+        streamMethod.setAccessible(true);
+
+        MachineTime<SI> step = MachineTime.of(1, SI.SECONDS);
+
+        Stream<Moment> resultStream = (Stream<Moment>) streamMethod.invoke(null, step, start, end);
+        List<Moment> result = resultStream.collect(Collectors.toList());
+
+        assertEquals(5, result.size());
+        assertEquals(start, result.get(0));
+        assertEquals(start.plus(4, SI.SECONDS), result.get(4));
+    }
+
+    /**
+     * Teszteli a toZonalInterval(String tzid) metódust érvényes időzónával
+     * Ez a teszt azt ellenőrzi, hogy az UTC-alapú intervallum helyesen konvertálódik
+     * a megadott időzónára
+     */
+    @Test
+    public void testToZonalIntervalValidZone() {
+        Moment start = PlainTimestamp.of(2025, 5, 5, 10, 0).atUTC();
+        Moment end = start.plus(60, SI.SECONDS);
+        MomentInterval interval = MomentInterval.between(start, end);
+
+        TimestampInterval zonalInterval = interval.toZonalInterval("Europe/Budapest");
+
+        assertEquals(PlainTimestamp.of(2025, 5, 5, 12, 0), zonalInterval.getStart().getTemporal());
+        assertEquals(PlainTimestamp.of(2025, 5, 5, 12, 1), zonalInterval.getEnd().getTemporal());
+    }
+
+    /**
+     * Teszteli a toZonalInterval(String tzid) metódust érvénytelen időzóna azonosítóval
+     * IllegalArgumentException dobódik, ha az időzóna ismeretlen
+     */
+    @Test(expected = IllegalArgumentException.class)
+    public void testToZonalIntervalInvalidZone() {
+        Moment start = PlainTimestamp.of(2025, 5, 5, 10, 0).atUTC();
+        Moment end = start.plus(60, SI.SECONDS);
+        MomentInterval interval = MomentInterval.between(start, end);
+
+        interval.toZonalInterval("Invalid/Zone");
     }
 
 }
